@@ -1,6 +1,8 @@
 function App() {
   return (
-    <div className="App" />
+    <div className="App">
+      <h1>React Typescript</h1>
+    </div>
   );
 }
 
