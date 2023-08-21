@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Input, SimpleGrid } from "@chakra-ui/react"
+import { Box, Button, VStack, Input, SimpleGrid } from "@chakra-ui/react"
 import { Todo } from "../types/todo"
 import { useCallback, useState } from "react"
 import  { v4 as uuidv4 } from 'uuid'
@@ -25,7 +25,7 @@ const TodoList = () => {
             })
         )
         setText('')
-    }, [])
+    }, [setTodos])
 
     const handleArchive = useCallback((todo: Todo) => {
         setTodos(
@@ -38,7 +38,7 @@ const TodoList = () => {
             text: todo.text,
             createdAt: todo.createdAt
         }))
-    }, [])
+    }, [setTodos, dispatch])
 
 
     return (
@@ -47,7 +47,7 @@ const TodoList = () => {
         <Button onClick={() => handleAdd(text)}>Add</Button>
         <SimpleGrid columns={{base : 1, md: 3}} spacing={10}>
             <Box>
-                <HStack spacing={5}>
+                <VStack spacing={5}>
                 {todos.map((todo: Todo) => (
                     <Box>
                         <Box key={todo.id}>{todo.text}</Box>
@@ -56,7 +56,7 @@ const TodoList = () => {
 
                 ))
                 }
-                </HStack>
+                </VStack>
             </Box>
             <p>two!</p>
             <p>three!</p>

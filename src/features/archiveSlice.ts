@@ -1,4 +1,3 @@
-import { produce } from 'immer';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../app/store';
 import { Archive } from '../types/archive';
