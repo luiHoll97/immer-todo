@@ -1,69 +1,74 @@
-import { Box, Button, VStack, Input, SimpleGrid } from "@chakra-ui/react"
-import { Todo } from "../types/todo"
-import { useCallback, useState } from "react"
-import  { v4 as uuidv4 } from 'uuid'
-import { produce } from "immer"
-import { useAppDispatch } from "../app/hooks"
-import { addArchive } from "../features/archiveSlice"
-
+import { Box, Button, VStack, Input, SimpleGrid } from "@chakra-ui/react";
+import { Todo } from "../types/todo";
+import { useCallback, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { produce } from "immer";
+import { useAppDispatch } from "../app/hooks";
+import { addArchive } from "../features/archiveSlice";
 
 const TodoList = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [text, setText] = useState<string>("");
+  const dispatch = useAppDispatch();
 
-    const [todos, setTodos] = useState<Todo[]>([])
-    const [text, setText] = useState<string>('')
-    const dispatch = useAppDispatch()
+  const handleAdd = useCallback(
+    (input: string) => {
+      setTodos(
+        produce((prev) => {
+          prev.push({
+            id: uuidv4(),
+            text: input,
+            status: 1,
+            createdAt: new Date().toDateString(),
+          });
+        })
+      );
+      setText("");
+    },
+    [setTodos]
+  );
 
-    const handleAdd = useCallback((input: string) => {
-        setTodos(
-            produce((prev) => {
-                prev.push({
-                    id: uuidv4(),
-                    text: input,
-                    status: 1,
-                    createdAt: (new Date()).toDateString()
-                })
-            })
-        )
-        setText('')
-    }, [setTodos])
+  const handleArchive = useCallback(
+    (todo: Todo) => {
+      setTodos(
+        produce((prev) => {
+          return prev.filter((t) => t.id !== todo.id);
+        })
+      );
+      dispatch(
+        addArchive({
+          id: todo.id,
+          text: todo.text,
+          createdAt: todo.createdAt,
+        })
+      );
+    },
+    [setTodos, dispatch]
+  );
 
-    const handleArchive = useCallback((todo: Todo) => {
-        setTodos(
-            produce((prev) => {
-               return prev.filter((t) => t.id !== todo.id)
-            })
-        )
-        dispatch(addArchive({
-            id: todo.id,
-            text: todo.text,
-            createdAt: todo.createdAt
-        }))
-    }, [setTodos, dispatch])
+  return (
+    <>
+      <Input value={text} onChange={(e) => setText(e.target.value)} />
+      <Button onClick={() => handleAdd(text)}>Add</Button>
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
+        <Box bg={"red.300"} opacity={"0.7"} borderRadius={"md"}>
+          <VStack spacing={5}>
+            {todos
+              .filter((todo: Todo) => todo.status == 1)
+              .map((todo: Todo) => (
+                <Box>
+                  <Box key={todo.id}>{todo.text}</Box>
+                  <Button onClick={() => handleArchive(todo)}>Archive</Button>
+                </Box>
+              ))}
+          </VStack>
+        </Box>
+        <p>two!</p>
+        <p>three!</p>
+      </SimpleGrid>
+      <h1>Todo</h1>
+    </>
+  );
+};
 
-
-    return (
-        <>
-        <Input value={text} onChange={(e) => setText(e.target.value)} />
-        <Button onClick={() => handleAdd(text)}>Add</Button>
-        <SimpleGrid columns={{base : 1, md: 3}} spacing={10}>
-            <Box>
-                <VStack spacing={5}>
-                {todos.map((todo: Todo) => (
-                    <Box>
-                        <Box key={todo.id}>{todo.text}</Box>
-                        <Button onClick={() => handleArchive(todo)}>Archive</Button>
-                    </Box>
-
-                ))
-                }
-                </VStack>
-            </Box>
-            <p>two!</p>
-            <p>three!</p>
-        </SimpleGrid>
-        <h1>Todo</h1>
-        </>
-    )
-}
-
-export default TodoList
+export default TodoList;
