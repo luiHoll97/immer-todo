@@ -7,14 +7,15 @@ import { removeArchive, selectArchives } from "../features/archiveSlice"
 const Archives = () => {
 
     const archives = useAppSelector(selectArchives)
+    const dispatch = useAppDispatch()
 
     return (
         <>
         <SimpleGrid columns={{base : 1, md: 3}} spacing={10}>
             <Box>
                 <HStack spacing={5}>
-                {archives.map((todo: Archive) => (
-                    <Box onClick={() => console.log(todo)} key={todo.id}>{todo.text}</Box>
+                {archives.map((archive: Archive) => (
+                    <Box onClick={() => dispatch(removeArchive(archive.id))} key={archive.id}>{archive.text}</Box>
                 ))
                 }
                 </HStack>
