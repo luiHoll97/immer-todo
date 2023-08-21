@@ -1,8 +1,10 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import archivesReducer from '../features/archiveSlice';
 
 
 export const store = configureStore({
   reducer: {
+    archive: archivesReducer,
   },
 });
 

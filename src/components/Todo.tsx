@@ -3,12 +3,15 @@ import { Todo } from "../types/todo"
 import { useCallback, useState } from "react"
 import  { v4 as uuidv4 } from 'uuid'
 import { produce } from "immer"
+import { useAppDispatch } from "../app/hooks"
+import { addArchive } from "../features/archiveSlice"
 
 
 const TodoList = () => {
 
     const [todos, setTodos] = useState<Todo[]>([])
     const [text, setText] = useState<string>('')
+    const dispatch = useAppDispatch()
 
     const handleAdd = useCallback((input: string) => {
         setTodos(
@@ -24,6 +27,20 @@ const TodoList = () => {
         setText('')
     }, [])
 
+    const handleArchive = useCallback((todo: Todo) => {
+        setTodos(
+            produce((prev) => {
+               return prev.filter((t) => t.id !== todo.id)
+            })
+        )
+        dispatch(addArchive({
+            id: todo.id,
+            text: todo.text,
+            createdAt: todo.createdAt
+        }))
+    }, [])
+
+
     return (
         <>
         <Input value={text} onChange={(e) => setText(e.target.value)} />
@@ -32,7 +49,11 @@ const TodoList = () => {
             <Box>
                 <HStack spacing={5}>
                 {todos.map((todo: Todo) => (
-                    <Box onClick={() => console.log(todo)} key={todo.id}>{todo.text}</Box>
+                    <Box>
+                        <Box key={todo.id}>{todo.text}</Box>
+                        <Button onClick={() => handleArchive(todo)}>Archive</Button>
+                    </Box>
+
                 ))
                 }
                 </HStack>

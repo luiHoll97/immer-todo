@@ -1,5 +1,6 @@
 import Todo from "./Todo";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
+import Archives from "./Archives";
 
 
 const Home = () => {
@@ -15,7 +16,7 @@ const Home = () => {
                         <Todo />
                     </TabPanel>
                     <TabPanel>
-                        <p>two!</p>
+                        <Archives />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
