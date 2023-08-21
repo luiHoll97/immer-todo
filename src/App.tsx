@@ -1,8 +1,10 @@
-function App() {
+import Home from "./components/Home";
+
+const App = () => {
   return (
-    <div className="App">
-      <h1>React Typescript</h1>
-    </div>
+    <>
+      <Home />
+    </>
   );
 }
 
