@@ -16,19 +16,14 @@ export const archiveSlice = createSlice({
     initialState,
     reducers: {
         addArchive: (state, action: PayloadAction<Archive>) => {
-            // Use Immer's produce to update state in an immutable way
-            return produce(state, (draftState) => {
-                draftState.archives.push(action.payload);
-            });
+            state.archives.push(action.payload);
         },
         removeArchive: (state, action: PayloadAction<string>) => {
-            return produce(state, (draftState) => {
-                draftState.archives = draftState.archives.filter(
-                    (archive) => archive.id !== action.payload
-                );
-            });
+            state.archives = state.archives.filter(
+                (archive) => archive.id !== action.payload
+            );
         }
-    },
+    }
 });
 
 export const { addArchive, removeArchive } = archiveSlice.actions;
