@@ -1,15 +1,28 @@
-import { Box, Button, VStack, Input, SimpleGrid } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  VStack,
+  Input,
+  SimpleGrid,
+  Heading,
+  Flex,
+  Center,
+  Alert,
+  AlertIcon,
+  InputGroup,
+  InputLeftElement,
+  Icon,
+} from "@chakra-ui/react";
 import { Todo } from "../types/todo";
 import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { produce } from "immer";
-import { useAppDispatch } from "../app/hooks";
-import { addArchive } from "../features/archiveSlice";
+import TodoStack from "./TodoStack";
+import { FaClipboard } from "react-icons/fa";
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [text, setText] = useState<string>("");
-  const dispatch = useAppDispatch();
 
   const handleAdd = useCallback(
     (input: string) => {
@@ -28,45 +41,90 @@ const TodoList = () => {
     [setTodos]
   );
 
-  const handleArchive = useCallback(
-    (todo: Todo) => {
-      setTodos(
-        produce((prev) => {
-          return prev.filter((t) => t.id !== todo.id);
-        })
-      );
-      dispatch(
-        addArchive({
-          id: todo.id,
-          text: todo.text,
-          createdAt: todo.createdAt,
-        })
-      );
-    },
-    [setTodos, dispatch]
-  );
+  const handleWarning = () => {
+    return (
+      <Alert status="warning">
+        <AlertIcon />
+        Please keep your todos under 80 characters.
+      </Alert>
+    );
+  };
 
   return (
     <>
-      <Input value={text} onChange={(e) => setText(e.target.value)} />
-      <Button onClick={() => handleAdd(text)}>Add</Button>
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
-        <Box bg={"red.300"} opacity={"0.7"} borderRadius={"md"}>
-          <VStack spacing={5}>
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10} h={"60%"}>
+        <Box borderBottomRadius={"md"} h={"100%"}>
+          <Center>
+            <Heading size={"sm"} fontFamily={"mono"}>
+              todo
+            </Heading>
+          </Center>
+          <VStack spacing={1}>
             {todos
-              .filter((todo: Todo) => todo.status == 1)
+              .filter((todo: Todo) => todo.status === 1)
               .map((todo: Todo) => (
-                <Box>
-                  <Box key={todo.id}>{todo.text}</Box>
-                  <Button onClick={() => handleArchive(todo)}>Archive</Button>
-                </Box>
+                <TodoStack todo={todo} setTodos={setTodos} />
+              ))}
+          </VStack>
+          <Flex
+            justifyContent={"space-between"}
+            w={"90%"}
+            m={3}
+            borderWidth={"0px 1px 1px 0px"}
+            borderColor={"blue.200"}
+            p={5}
+            opacity={0.5}
+          >
+            <Box overflow={"wrap"}>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <Icon as={FaClipboard} color="gray.300" />
+                </InputLeftElement>
+                <Input
+                  variant={"flushed"}
+                  placeholder="enter a todo"
+                  fontFamily={"mono"}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  borderBottom={0}
+                />
+              </InputGroup>
+            </Box>
+            <Button onClick={() => handleAdd(text)} variant={"outline"}>
+              Add
+            </Button>
+          </Flex>
+        </Box>
+        <Box>
+          <Center>
+            <Heading size={"sm"} fontFamily={"mono"}>
+              in Progress
+            </Heading>
+          </Center>
+          <VStack spacing={1}>
+            {todos
+              .filter((todo: Todo) => todo.status === 2)
+              .map((todo: Todo) => (
+                <TodoStack todo={todo} setTodos={setTodos} />
               ))}
           </VStack>
         </Box>
-        <p>two!</p>
-        <p>three!</p>
+        <Box>
+          <Center>
+            <Heading size={"sm"} fontFamily={"mono"}>
+              complete
+            </Heading>
+          </Center>
+          <VStack spacing={1}>
+            {todos
+              .filter((todo: Todo) => todo.status === 3)
+              .map((todo: Todo) => (
+                <TodoStack todo={todo} setTodos={setTodos} />
+              ))}
+          </VStack>
+        </Box>
       </SimpleGrid>
-      <h1>Todo</h1>
+      {text.length > 80 && handleWarning()}
     </>
   );
 };
