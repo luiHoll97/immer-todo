@@ -1,7 +1,8 @@
-import { Box, HStack, SimpleGrid } from "@chakra-ui/react";
+import { Box, Center, HStack, Icon, SimpleGrid, Text } from "@chakra-ui/react";
 import { Archive } from "../types/archive";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { removeArchive, selectArchives } from "../features/archiveSlice";
+import { FaTrash } from "react-icons/fa";
 
 const Archives = () => {
   const archives = useAppSelector(selectArchives);
@@ -9,23 +10,39 @@ const Archives = () => {
 
   return (
     <>
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
-        <Box>
-          <HStack spacing={5}>
-            {archives.map((archive: Archive) => (
-              <Box
-                onClick={() => dispatch(removeArchive(archive.id))}
-                key={archive.id}
-              >
-                {archive.text}
-              </Box>
-            ))}
-          </HStack>
-        </Box>
-        <p>two!</p>
-        <p>three!</p>
-      </SimpleGrid>
-      <h1>Todo</h1>
+      <Center>
+        <SimpleGrid
+          m={5}
+          columns={{ base: 1, md: 3 }}
+          row={{ base: 10, md: 3 }}
+          spacing={10}
+        >
+          {archives.map((archive: Archive) => (
+            <Box
+              p={5}
+              m={3}
+              borderBottomRadius={"md"}
+              h={"100%"}
+              bg={"gray.100"}
+              justifyContent={"space-between"}
+              overflow={"hidden"}
+            >
+              <Text whiteSpace={"normal"}>{archive.text}</Text>
+              <HStack mt={3}>
+                <Text>
+                  <code>{archive.createdAt}</code>
+                </Text>
+                <Icon
+                  m={3}
+                  as={FaTrash}
+                  color={"red.500"}
+                  onClick={() => dispatch(removeArchive(archive.id))}
+                />
+              </HStack>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Center>
     </>
   );
 };
